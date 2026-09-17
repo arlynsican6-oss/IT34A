@@ -1,63 +1,65 @@
-<?php
+CREATE TABLE IF NOT EXISTS activity_logs(
+    activity_log_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id VARCHAR(255),
+    user_email VARCHAR(255),
+    activity_log_action VARCHAR(50) NOT NULL,
+    activity_log_status ENUM('success','failed') DEFAULT 'success',
 
-function redirect($path){
-    header ("Location: " . BASE_URL . $path);
-    exit;
-}
+    -- Client Parameters
+    activity_log_ip_address VARCHAR(45),
+    activity_log_user_agent VARCHAR(255),
+    
+    -- Timestamp
+    activity_log_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-function loginUser($pdo,$login,$password) {
-    //Application query #2
+-- TABLE # 3 USERS TABLE
 
-    $sql = "
-    SELECT
-       user_id,
-       user_email,
-       user_username,
-       user_password,
-       user_role,
-       FROM users
-       WHERE user_email = :login
-       OR user_username = :login
-       LIMIT 1
-";
+CREATE TABLE IF NOT EXISTS users(
 
-   $stmt =$pdo>prepare($sql);
-   $stmt->execute([' :login'=>$login]);
+    -- Primary Key fo users table
+user_id INT AUTO_INCREMENT PRIMARY KEY,
 
-   $user =$stmt->fetch();
+    -- initial user details
+user_email VARCHAR(50) UNIQUE NOT NULL,
+user_username VARCHAR(20) UNIQUE NOT NULL,
+user_password VARCHAR(255) NOT NULL,
+user_role ENUM ('admin', 'manager', 'user') NOT NULL DEFAULT 'user',
 
-   if (!$user){
-    return false;
-   }
+     -- user created timestamp default not null
+user_created_at TIMESTAMP
+DEFAULT CURRENT_TIMESTAMP,
 
-   if(!password_verify($password,$user['user_password'])){
-    return false;
-   }
+    -- user updated timestamp 
+    user_updated_at TIMESTAMP
+    DEFAULT CURRENT_TIMESTAMP
+    ON UPDATE CURRENT_TIMESTAMP
 
-   //SESSION Variables
-
-   $_SESSION['user_id'] = $user['user_id'];
-   $_SESSION['user_email'] = $user['user_email'];
-   $_SESSION['user_username'] = $user['user_username'];
-   $_SESSION['user_role'] = $user['user_role'];
-
-   return true;
-}
-
-function requireLogin(){
-    if(!isset($_SESSION['user_id'])){
-        header('Location: ' . BASE_URL . '/index.php');
-        exit;
-    }
-};
-
-function requireRole($role){
-    requireLogin();
-
-    if($_SESSION['user_role' !==$role]){
-        http_response_code(403);
-        die('Access Denied');
-    }
-}
-
-?>
+);
+-- Insert Query #1
+INSERT INTO users
+(
+    user_email,
+    user_username,
+    user_password,
+    user_role
+)
+VALUES
+(
+    'admin@example.com',
+    'admin',
+    '$2y$10$HNfhClczEWBxcFuJwP53iu2Y75Tba7IEtmX8vX.1tp0dZ5EVt9CbO',
+    'admin'
+),
+(
+    'manager@example.com',
+    'manager',
+    '$2y$10$HNfhClczEWBxcFuJwP53iu2Y75Tba7IEtmX8vX.1tp0dZ5EVt9CbO',
+    'manager'
+),
+(
+    'user@example.com',
+    'user',
+    '$2y$10$HNfhClczEWBxcFuJwP53iu2Y75Tba7IEtmX8vX.1tp0dZ5EVt9CbO',
+    'user'
+);
