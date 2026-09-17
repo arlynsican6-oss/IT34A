@@ -1,5 +1,6 @@
 <?php
 
+<<<<<<< HEAD
 function redirect($path)
 {
     header("Location: " . BASE_URL . $path);
@@ -67,3 +68,12 @@ function requireRole($role)
 }
 
 ?>
+=======
+funtion redirect($path){
+    header("Location:" . BASE_URL . $path);
+    exit;
+}
+
+
+?> 
+>>>>>>> origin/main
