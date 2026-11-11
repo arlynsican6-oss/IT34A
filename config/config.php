@@ -2,7 +2,11 @@
 session_start();
 
 // Load activity logger
-require_once __DIR__ . '/../includes/activity-logger.php';
+require_once __DIR__ . '/../functions/activity.php';
+require_once __DIR__ . '/../functions/auth.php';
+require_once __DIR__ . '/../functions/redirect.php';
+require_once __DIR__ . '/../functions/sessions.php';
+require_once __DIR__ . '/../functions/csrf.php';
 
 
 // Application URL
@@ -23,11 +27,12 @@ try {
     $pdo = new PDO(
         "mysql:host=" . DB_HOST .
         ";dbname=" . DB_NAME,
+
         DB_USER,
         DB_PASS,
 
         [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
         ]
     );
 
